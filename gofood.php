@@ -94,7 +94,7 @@ function register_gojek() {
                     echo "\n";
                     sleep(3);
                     if (stripos($claim, '"success":true')) {
-                        echo "Berhasil Claim Kak? Selamat Makan\n";
+                        echo "Berhasil Claim Slurr! Selamat Makan\n";
                     } else {
                         echo "Cie Gagal Redem Ga Jadi Makan\n";
                 }
@@ -107,8 +107,8 @@ function register_gojek() {
     }
 
 }
-echo "Nabila Tools - Gojek Register + Claim GoFood\n";
-echo "Thanks To : Ikhsan, Yudha, Pandu\n";
+echo "Gojek Register + Claim GoFood\n";
+echo "Thanks To : Esgebe Tegalan\n";
 register_gojek();
 
 ?>
