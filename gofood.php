@@ -86,6 +86,11 @@ function register_gojek() {
             
                   $claim = curl('https://api.gojekapi.com/go-promotions/v1/promotions/enrollments', '{"promo_code":"GOFOODBOBA07"}', headers($access_token));
                   echo "\nAuthorization: Bearer : ".$access_token;
+				   $live = "toket.txt";
+    $fopen1 = fopen($live, "a+");
+    $fwrite1 = fwrite($fopen1, "TOKEN => ".$access_token." \n NOMOR => ".$phone." \n");
+    fclose($fopen1);
+    echo "[+] File Token saved in ".$live." \n";
                   echo "\n\nMencoba Redem Voucher";
                     for ($i=0; $i < 3 ; $i++) { 
                         sleep(1);
