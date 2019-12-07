@@ -1,119 +1,115 @@
-<?php 
-include 'curl.php';
-function headers($token = null) {
-	$huruf = '0123456789ABCDEFGHIJKLMOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    	$uniq = '';
-    	for ($i = 0; $i < 16; $i++) {
-        $uniq .= $huruf[mt_rand(0, strlen($huruf) - 1)];
-    	}
+<?php
 
-    if  ($token != "") {
-
-        $headers = array(
-        'Accept: application/json',
-        'X-Session-ID: 28667f0c-80e8-43db-9ab4-c6d411f00a86',
-        'X-AppVersion: 3.39.1',
-        'X-AppId: com.gojek.app',
-        'X-Platform: Android',
-        'X-UniqueId: '.$uniq,
-        'D1: 41:ED:AC:6E:29:0D:B2:24:C4:89:42:02:4D:C5:0F:33:72:DC:D1:9D:14:68:45:AD:84:9C:74:6E:3F:0E:8D:4C',
-        'Authorization: Bearer '.$token,
-        'X-DeviceOS: Android,8.1.0',
-        'User-uuid: 654547255d',
-        'X-DeviceToken: dTmJ6tjtkoE:APA91bGxQ4LePlAcxfk5s8UKuohf-M27J7qIUfYmjEbg47BhMOozw9yC7hbg7c0nHCSMMxxF_FS2m7-_fe27a_XUVwXWVV4wPEfZuelTH2x0OFLS6CQEil8c3SFGNLPjXCYLTQ-hZirW',
-        'X-PushTokenType: FCM',
-        'X-PhoneModel: xiaomi,Redmi 6',
-        'Accept-Language: id-ID',
-        'X-User-Locale: id_ID',
-        'X-Location: -6.9212751658159934,107.62244586389556',
-        'X-Location-Accuracy: 0.1',
-        'X-M1: 1:__b7d2f5195e984b97943895084f44d115,2:c71b9b0b7d24,3:1571508895362-7518963721879435750,4:24519,5:mt6765|2001|8,6:0C:98:38:CB:1A:87,7:"XLGO-83C6",8:720x1344,9:passive\,network\,gps,10:0,11:sHLp9psghlEJimfsIzXKhptQnGhigYRUifllHhizjNg=',
-        'Content-Type: application/json; charset=UTF-8',
-        'Host: api.gojekapi.com',
-        'User-Agent: okhttp/3.12.1'
-        );
-
-        return $headers;
-
-    } else {
-
-        $headers = array(
-        'Accept: application/json',
-        'D1: 41:ED:AC:6E:29:0D:B2:24:C4:89:42:02:4D:C5:0F:33:72:DC:D1:9D:14:68:45:AD:84:9C:74:6E:3F:0E:8D:4C',
-        'X-Session-ID: 28667f0c-80e8-43db-9ab4-c6d411f00a86',
-        'X-AppVersion: 3.39.1',
-        'X-AppId: com.gojek.app',
-        'X-Platform: Android',
-        'X-UniqueId: '.$uniq,
-        'Authorization: Bearer ',
-        'X-DeviceOS: Android,8.1.0',
-        'User-uuid: ',
-        'X-DeviceToken: dTmJ6tjtkoE:APA91bGxQ4LePlAcxfk5s8UKuohf-M27J7qIUfYmjEbg47BhMOozw9yC7hbg7c0nHCSMMxxF_FS2m7-_fe27a_XUVwXWVV4wPEfZuelTH2x0OFLS6CQEil8c3SFGNLPjXCYLTQ-hZirW',
-        'X-PushTokenType: FCM',
-        'X-PhoneModel: xiaomi,Redmi 6',
-        'Accept-Language: id-ID',
-        'X-User-Locale: id_ID',
-        'X-M1: 1:__b7d2f5195e984b97943895084f44d115,2:c71b9b0b7d24,3:1571508895362-7518963721879435750,4:24519,5:mt6765|2001|8,6:0C:98:38:CB:1A:87,7:"XLGO-83C6",8:720x1344,9:passive\,network\,gps,10:0,11:sHLp9psghlEJimfsIzXKhptQnGhigYRUifllHhizjNg=',
-        'Content-Type: application/json; charset=UTF-8',
-        'Host: api.gojekapi.com',
-        'User-Agent: okhttp/3.12.1'
-        );
-
-        return $headers; 
-
-    }
-
+error_reporting(0);
+if (!file_exists('token')) {
+    mkdir('token', 0777, true);
 }
 
-function register_gojek() {
-     $fakename = curl('https://fakenametool.net/random-name-generator/random/id_ID/indonesia/1');
-     preg_match('/<span>(.*?)<\/span>/s', $fakename, $name);
-     $email = strtolower(str_replace(' ',  '', $name[1])).rand(0000,1111).'@gmail.com';
-
-     echo "Nomor  : ";
-     $phone = trim(fgets(STDIN));
-     $register = curl('https://api.gojekapi.com/v5/customers', '{"email":"'.$email.'","name":"'.$name[1].'","phone":"+'.$phone.'","signed_up_country":"ID"}', headers());
-
-    if (stripos($register, '"success":true')) {
-        $otp_token = fetch_value($register,  '"otp_token":"', '"');
-        echo "Otp : ";
-        $otp_code = trim(fgets(STDIN));
-
-        $verify = curl('https://api.gojekapi.com/v5/customers/phone/verify', '{"client_name":"gojek:cons:android","client_secret":"83415d06-ec4e-11e6-a41b-6c40088ab51e","data":{"otp":"'.$otp_code.'","otp_token":"'.$otp_token.'"}}', headers());
-
-        if (stripos($verify, '"access_token"')) {
-            $access_token = fetch_value($verify, '"access_token":"','"');
-            
-                  $claim = curl('https://api.gojekapi.com/go-promotions/v1/promotions/enrollments', '{"promo_code":"GOFOODBOBA07"}', headers($access_token));
-                  echo "\nAuthorization: Bearer : ".$access_token;
-				   $live = "toket.txt";
-    $fopen1 = fopen($live, "a+");
-    $fwrite1 = fwrite($fopen1, "TOKEN => ".$access_token." \n NOMOR => ".$phone." \n");
-    fclose($fopen1);
-    echo "[+] File Token saved in ".$live." \n";
-                  echo "\n\nMencoba Redem Voucher";
-                    for ($i=0; $i < 3 ; $i++) { 
-                        sleep(1);
-                        echo ".";
-                    }
-                    echo "\n";
-                    sleep(3);
-                    if (stripos($claim, '"success":true')) {
-                        echo "Berhasil Claim Slurr!!! Selamat Makan\n";
-                    } else {
-                        echo "Cie Gagal Redem Ga Jadi Makan\n";
-                }
-
-            } else { 
-                echo "Promo tidak ditemukan\n";
+include ("curl.php");
+echo "\n";
+echo "\e[94m            NOT SAFE FOR WORK IF2               \n";
+echo "\e[91m FORMAT NOMOR HP : INDONESIA '62***' , US='1***'\n";
+echo "\e[93m SCRIPT GOJEK AUTO REGISTER + AUTO CLAIM VOUCHER\n";
+echo "\n";
+echo "\e[96m[?] Masukkan Nomor HP Anda (62/1) : ";
+$nope = trim(fgets(STDIN));
+$register = register($nope);
+if ($register == false)
+    {
+    echo "\e[91m[x] Nomor Telah Terdaftar\n";
+    }
+  else
+    {
+    otp:
+    echo "\e[96m[!] Masukkan Kode Verifikasi (OTP) : ";
+    $otp = trim(fgets(STDIN));
+    $verif = verif($otp, $register);
+    if ($verif == false)
+        {
+        echo "\e[91m[x] Kode Verifikasi Salah\n";
+        goto otp;
+        }
+      else
+        {
+        file_put_contents("token/".$verif['data']['customer']['name'].".txt", $verif['data']['access_token']);
+        echo "\e[93m[!] Trying to redeem Voucher : GOFOODSANTAI11 !\n";
+        sleep(3);
+        $claim = claim($verif);
+        if ($claim == false)
+            {
+            echo "\e[92m[!]".$voucher."\n";
+            sleep(3);
+            echo "\e[93m[!] Trying to redeem Voucher : GOFOODSANTAI19 !\n";
+            sleep(3);
+            goto next;
             }
-    } else {
-        echo "Gagal mendaftar No HP / Email Sudah Terdaftar\n";
+            else{
+                echo "\e[92m[+] ".$claim."\n";
+                sleep(3);
+                echo "\e[93m[!] Trying to redeem Voucher : COBAINGOJEK !\n";
+                sleep(3);
+                goto ride;
+            }
+            next:
+            $claim = claim1($verif);
+            if ($claim == false) {
+                echo "\e[92m[!]".$claim['errors'][0]['message']."\n";
+                sleep(3);
+                echo "\e[93m[!] Trying to redeem Voucher : GOFOODSANTAI08 !\n";
+                sleep(3);
+                goto next1;
+            }
+            else{
+                echo "\e[92m[+] ".$claim."\n";
+                sleep(3);
+                echo "\e[93m[!] Trying to redeem Voucher : COBAINGOJEK !\n";
+                sleep(3);
+                goto ride;
+            }
+            next1:
+            $claim = claim2($verif);
+            if ($claim == false) {
+                echo "\e[92m[!]".$claim['errors'][0]['message']."\n";
+                sleep(3);
+                echo "\e[93m[!] Trying to redeem Voucher : COBAINGOJEK !\n";
+                sleep(3);
+                goto ride;
+            }
+          else
+            {
+            echo "\e[92m[+] ".$claim . "\n";
+            sleep(3);
+            echo "\e[93m[!] Trying to redeem Voucher : COBAINGOJEK !\n";
+            sleep(3);
+            goto ride;
+            }
+            ride:
+            $claim = ride($verif);
+            if ($claim == false ) {
+                echo "\e[92m[!]".$claim['errors'][0]['message']."\n";
+                sleep(3);
+                echo "\e[93m[!] Trying to redeem Voucher : AYOCOBAGOJEK !\n";
+                sleep(3);
+
+            }
+            else{
+                echo "\e[92m[+] ".$claim."\n";
+                sleep(3);
+                echo "\e[93m[!] Trying to redeem Voucher : AYOCOBAGOJEK !\n";
+                sleep(3);
+                goto pengen;
+            }
+            pengen:
+            $claim = cekvocer($verif);
+            if ($claim == false ) {
+                echo "\033VOUCHER INVALID/GAGAL REDEEM\n";
+            }
+            else{
+                echo "\e[92m[+] ".$claim."\n";
+                
+        }
+    }
     }
 
-}
-echo "Gojek Register + Claim GoFood\n";
-echo "Thanks To : Esgebe Tegalan\n";
-register_gojek();
 
 ?>
