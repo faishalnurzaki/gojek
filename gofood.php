@@ -84,7 +84,7 @@ function register_gojek() {
         if (stripos($verify, '"access_token"')) {
             $access_token = fetch_value($verify, '"access_token":"','"');
             
-                  $claim = curl('https://api.gojekapi.com/go-promotions/v1/promotions/enrollments', '{"promo_code":"GOFOODBOBA07"}', headers($access_token));
+                  $claim = curl('https://api.gojekapi.com/go-promotions/v1/promotions/enrollments', '{"promo_code":"G-CJKBSG4"}', headers($access_token));
                   echo "\nAuthorization: Bearer : ".$access_token;
 				   $live = "toket.txt";
     $fopen1 = fopen($live, "a+");
